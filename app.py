@@ -94,7 +94,6 @@ def outtputs():
     ce_path = (request.form.get("ce_path"))
     select_tumor = request.form.get("part_of_tumor")
     output_path = (request.form.get("output_path"))
-    # output_path = r"C:\Users\VEERENDRA\Desktop\miniproject\result.jpg"
 
     if (not flair_path):
         return render_template("failure.html", message="missing flair path")
