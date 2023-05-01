@@ -17,10 +17,11 @@ IMG_SIZE = 128
 # to start at 5 and use 145 slices means we will skip the first 5 and last 5
 VOLUME_SLICES = 100
 VOLUME_START_AT = 22  # first slice of volume that we will include
+cur_dirr = os.path.abspath(os.getcwd())
 
 
-def predict_tumors(flair_path, ce_path, dropdown,
-                   output_path, start_slice=60):
+def predict_tumors(flair_path, ce_path, dropdown, start_slice=60):
+
     X = np.empty((VOLUME_SLICES, IMG_SIZE, IMG_SIZE, 2))
 
     flair = nib.load(flair_path).get_fdata()
@@ -34,26 +35,26 @@ def predict_tumors(flair_path, ce_path, dropdown,
 
     pred = unet.predict(X/np.max(X), verbose=1)
 
-    core = pred[:, :, :, 1]
-    edema = pred[:, :, :, 2]
-    enhancing = pred[:, :, :, 3]
-
-    plt.imshow(cv2.resize(flair[:, :, start_slice+VOLUME_START_AT], (IMG_SIZE, IMG_SIZE)),
-               cmap="gray", interpolation='none', alpha=0.7)
+    plt.imshow(cv2.resize(flair[:, :, start_slice+VOLUME_START_AT],
+                          (IMG_SIZE, IMG_SIZE)), cmap="gray",
+               interpolation='none', alpha=0.7)
 
     if dropdown == SEGMENT_CLASSES[1]:
+        edema = pred[:, :, :, 2]
         plt.imshow(edema[start_slice, :, :], cmap="OrRd",
                    interpolation='none', alpha=0.3)
         plt.title(f'{SEGMENT_CLASSES[1]} predicted')
         plt.axis(False)
 
     elif dropdown == SEGMENT_CLASSES[2]:
+        core = pred[:, :, :, 1]
         plt.imshow(core[start_slice, :, :], cmap="OrRd",
                    interpolation='none', alpha=0.3)
         plt.title(f'{SEGMENT_CLASSES[2]} predicted')
         plt.axis(False)
 
     elif dropdown == SEGMENT_CLASSES[3]:
+        enhancing = pred[:, :, :, 3]
         plt.imshow(enhancing[start_slice, :, :],
                    cmap="OrRd", interpolation='none', alpha=0.3)
         plt.title(f'{SEGMENT_CLASSES[3]} predicted')
@@ -66,7 +67,7 @@ def predict_tumors(flair_path, ce_path, dropdown,
         plt.axis(False)
 
     plt.tight_layout()
-    plt.savefig(output_path)
+    plt.savefig(cur_dirr + '\\static\\out_img.png')
     # plt.show()
 
 
@@ -77,9 +78,7 @@ unet.load_weights("unet_weights_vir.h5")
 print('\nready to launch...\n')
 
 
-UPLOAD_FOLDER = os.path.join('static', 'UPLOAD_FOLDER')
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 @app.route('/')
@@ -90,10 +89,9 @@ def home():
 @app.route('/outpg', methods=["GET", "POST"])
 def outtputs():
 
-    flair_path = (request.form.get("flair_path"))
-    ce_path = (request.form.get("ce_path"))
-    select_tumor = request.form.get("part_of_tumor")
-    output_path = (request.form.get("output_path"))
+    flair_path = os.path.abspath(request.form.get("flair_path")[1:-1])
+    ce_path = os.path.abspath(request.form.get("ce_path")[1:-1])
+    select_tumor = (request.form.get("part_of_tumor"))
 
     if (not flair_path):
         return render_template("failure.html", message="missing flair path")
@@ -104,21 +102,19 @@ def outtputs():
 
     predict_tumors(flair_path=flair_path,
                    ce_path=ce_path,
-                   dropdown=select_tumor,
-                   output_path=output_path)
-    
-    flair = nib.load(flair_path).get_fdata()
+                   dropdown=select_tumor)
 
+    flair = nib.load(flair_path).get_fdata()
     plt.imshow(cv2.resize(flair[:, :, 60+VOLUME_START_AT], (IMG_SIZE, IMG_SIZE)),
                cmap="gray", interpolation='none', alpha=1.0)
-    plt.title('input_img')
+    plt.title('input image')
     plt.tight_layout()
-    plt.savefig('input.jpg')
+    plt.savefig(cur_dirr + '\\static\\input.png')
 
-    input_filename = os.path.join(app.config['UPLOAD_FOLDER'], 'input.jpg')
-    return render_template("success.html", 
-                           flair_path=input_filename, 
-                           output_path=output_path) 
+    return render_template("success.html",
+                           flair_path="input.png",
+                           output_path="out_img.png")
 
-if __name__=='__main__':
-    app.run(debug=True)
+
+if __name__ == '__main__':
+    app.run()
