@@ -67,7 +67,7 @@ def predict_tumors(flair_path, ce_path, dropdown, start_slice=60):
         plt.axis(False)
 
     plt.tight_layout()
-    plt.savefig(cur_dirr + '\\static\\out_img.png')
+    plt.savefig(cur_dirr + '\\static\\out_img.jpg')
     # plt.show()
 
 
@@ -109,7 +109,7 @@ def outtputs():
                cmap="gray", interpolation='none', alpha=1.0)
     plt.title('input image')
     plt.tight_layout()
-    plt.savefig(cur_dirr + '\\static\\input.png')
+    plt.savefig(cur_dirr + '\\static\\input.jpg')
 
     return render_template("success.html",
                            flair_path="input.png",
