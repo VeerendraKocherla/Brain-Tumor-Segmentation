@@ -28,8 +28,8 @@ Developed a straightforward website to serve as a user interface.
    - Upon clicking "Generate," the model's prediction for the chosen region is displayed.
 ## Future work:
   - Train the dataset using a 3D U-Net model that employs conv3d layers instead of conv2d. This approach enables simultaneous extraction of information from all slices, enhancing the model's understanding of the data.
-  - Make the web app more interactive.
-  - Try some different algorithms like Auto Encoders, GANs, etc.
+  - Enhance the interactivity of the web app.
+  - Explore alternative algorithms such as Autoencoders, GANs, and other methods for experimentation.
 ## References:
   - "Convolutional Neural Networks" course by Andrew Ng on Coursera.
   - "Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow, 2nd Edition" book by Aurélien Géron.
