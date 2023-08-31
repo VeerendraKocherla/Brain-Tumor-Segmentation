@@ -1,0 +1,35 @@
+{% extends "layout.html" %} {% block content%}
+<form action="/outpg" method="post">
+  <p>
+    Flair Image Path:
+    <input
+      autocomplete="on"
+      autofocus
+      type="text"
+      name="flair_path"
+      placeholder=".nii files only"
+      size="30cm"
+    />
+  </p>
+
+  <p>
+    CE Image Path:
+    <input
+      autocomplete="on"
+      autofocus
+      type="text"
+      name="ce_path"
+      placeholder=".nii files only"
+      size="30cm"
+    />
+  </p>
+
+  <select name="part_of_tumor">
+    <option value="all_the_tumor" selected>ALL THE TUMOR</option>
+    {% for i in menuu %}
+    <option value="{{i}}">{{i}}</option>
+    {% endfor %}
+  </select>
+  <input class="submit-button" type="submit" name="generate" value="Generate" />
+</form>
+{% endblock content %}

@@ -1,0 +1,14 @@
+{% extends "layout.html" %} {% block content%}
+
+<!-- successfull!! -->
+<h2>Input image</h2>
+<div class="image-row">
+  <img src="{{ url_for('static', filename=flair_path) }}" alt="flair image" />
+  <img src="{{ url_for('static', filename=ce_path) }}" alt="ce image" />
+</div>
+<h2>Output image</h2>
+<div class="image-row">
+  <img src="{{ url_for('static', filename=output_path) }}" alt="output_img" />
+</div>
+
+{% endblock content %}
